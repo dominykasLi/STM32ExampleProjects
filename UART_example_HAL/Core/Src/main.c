@@ -46,6 +46,10 @@ UART_HandleTypeDef huart2;
 
 /* USER CODE BEGIN PV */
 uint8_t tx_buffer[30] = "Hello World!\n\r";
+uint8_t rx_indx;
+uint8_t rx_data[6];
+uint8_t rx_buffer[100];
+uint8_t transfer_cmplt;
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -92,8 +96,8 @@ int main(void)
   MX_GPIO_Init();
   MX_USART2_UART_Init();
   /* USER CODE BEGIN 2 */
-  HAL_GPIO_WritePin(GPIOC, GPIO_PIN_13, 1);
-  HAL_Delay(1000);
+  HAL_GPIO_WritePin(GPIOC, GPIO_PIN_13, 0);
+  HAL_UART_Receive_IT(&huart2, rx_data, 6);
   /* USER CODE END 2 */
 
   /* Infinite loop */
@@ -103,8 +107,8 @@ int main(void)
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
-	HAL_UART_Transmit(&huart2,tx_buffer,30,10);
-	HAL_Delay(1000);
+	//HAL_UART_Transmit(&huart2,tx_buffer,30,10);
+	//HAL_Delay(1000);
   }
   /* USER CODE END 3 */
 }
@@ -208,6 +212,15 @@ static void MX_GPIO_Init(void)
 }
 
 /* USER CODE BEGIN 4 */
+void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
+{
+  /* Prevent unused argument(s) compilation warning */
+  UNUSED(huart);
+  /* NOTE: This function should not be modified, when the callback is needed,
+           the HAL_UART_RxCpltCallback could be implemented in the user file
+   */
+  HAL_UART_Transmit(&huart2, rx_data, 6, 10); //Just printing in serial
+}
 
 /* USER CODE END 4 */
 
